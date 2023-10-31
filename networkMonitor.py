@@ -8,6 +8,7 @@ ip_add_pattern = re.compile("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
 # You have to specify <lowest_port_number>-<highest_port_number> (ex 10-100)
 port_range_pattern = re.compile("([0-9]+)-([0-9]+)")
 # imports from pyfiglet import Figlet
+# write file ;; log history, and tcp dump
 target = ""
 port_min = 0
 port_max = 65535
