@@ -27,6 +27,7 @@ totalEndtime = ""
 
     totalEndtime = int(startTime) - int(endTime)
     print(totalEndtime)
+    https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Dynamic,_private_or_ephemeral_ports
 '''
 try:
     # 65,535 existents ports / Scan every port on the target IP
