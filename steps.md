@@ -1,5 +1,5 @@
 # Next steps
-## nmap python
+## nmap python - port scanner
 - probably add threads or process to make more faster
 - write files, log files
 - add to database consults (?)
