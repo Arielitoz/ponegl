@@ -6,12 +6,10 @@ import re
 import threading
 import multiprocessing
 
-# imports from pyfiglet import Figlet
-
 ip_add_pattern = re.compile("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
 # Regular Expression Pattern to extract the number of ports you want to scan. 
-# You have to specify <lowest_port_number>-<highest_port_number> (ex 10-100)
 port_range_pattern = re.compile("([0-9]+)-([0-9]+)")
+# You have to specify <lowest_port>-<highest_port> (ex 10-100)
 
 # target - ip, port ranges / socket.AF_INET -> IPV4 family, SOCK_STREAM -> the socket type for TCP, the protocol that will be used to transport messages in the network.
 target = ""
