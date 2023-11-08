@@ -3,6 +3,8 @@ import socket
 from datetime import datetime
 import time
 import re
+import struct
+import textwrap
 import threading
 import multiprocessing
 
@@ -132,5 +134,13 @@ def validateUserOption():
     else:
         print("Insert a valid option\n\n")
         validateUserOption()
+
+# unpack ethernet frame
+def ethernetFrame(data):
+    # ! threat like a network data, the way network data is stored in computer is different thant the way it flows across the network: little endian / Big-endian
+    destination_mac, source_mac, protocol = struct.unpack('! 6s 6s H', data[:14])
+    # start to beginning; follow for 14 next bytes
+    return getMacAddress(destination_mac), getMacAddress(source_mac), socket.htons(protocol), data[14:]
+    # htons convert big-endian/ little-endian &7 data 14: to the end
 
 validateUserOption()

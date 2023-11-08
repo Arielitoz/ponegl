@@ -17,3 +17,19 @@
 ### somethings
 pulses of eletricity - computer sees ones and zeros, convert them to binary, them to data; Requests & Responses;
 IP Packet => Ethernet frame
+
+Ethernet frame -> 
+    sync - 8 bytes : router computer sync, they know when they´re receiving packets
+
+    receiver/sender: who´s receiving and sending the data
+    receiver - 6 byts
+    sender - 6 bytes
+
+    type - 2 byte: ethernet type, protocol
+        0x0800 -> IPV4 Frame
+        0x0806 -> ARP Request/Response
+        0x86DD -> IPV6 Frame
+    
+    payload - 46byte to 1500byte(IP/ARP frame + padding): main data
+
+    CRC - 4 Bytes : frame check to sure that all received data is correctly without any errors
