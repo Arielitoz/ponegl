@@ -28,7 +28,7 @@ def validateIp():
             print(f"{target} is a valid ip address")
             return target
 
-def scanTargetIp():
+def scanAllPorts():
     # target = input(str("Target IP: "))
     validateIp()
     
@@ -105,29 +105,29 @@ def scanRangedPorts():
     processTime = (endTime - startTime) * 1000
     print(f"\nprocess take {processTime:.2f} in ms.")
 
-def scanPort():
+def portScanner():
 
     print("\n")
     print("=" * 50)
     chooseTypeScan = input("[ --- Type a scan option: ---] \n1- Target IP all Ports;\n2-Specific Port;\n3-Range Ports\nYour option: ")
     if chooseTypeScan == "1":
         # print("PORT SCANNER - Python\n")
-        scanTargetIp()
+        scanAllPorts()
     elif chooseTypeScan == "2":
         scanRangedPorts()
         # quit()
     else:
         print("Insert a valid Option")
-        scanPort()
+        portScanner()
 
 def validateUserOption():
-    validarEscolha = input("[ --- Choose an option: --- ]\n1 - Scan Port;\n2 - TCP Dump\n3 - Close program\nYour option: ")
-    if validarEscolha == "1":
-        scanPort()
-    elif validarEscolha == "2":
+    chooseInput = input("[ --- Choose an option: --- ]\n1 - Port Scanner;\n2 - TCP Dump/Packet Sniffer\n3 - Close program\nYour option: ")
+    if chooseInput == "1":
+        portScanner()
+    elif chooseInput == "2":
         print("\n")
         print("oi")    
-    elif validarEscolha == "3":
+    elif chooseInput == "3":
         print("Thank you!")
             
         quit()
