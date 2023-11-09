@@ -143,4 +143,10 @@ def ethernetFrame(data):
     return getMacAddress(destination_mac), getMacAddress(source_mac), socket.htons(protocol), data[14:]
     # htons convert big-endian/ little-endian &7 data 14: to the end
 
+# return formatted MAC address
+def getMacAddress(bytesAddress):
+    # map() function and iterate
+    bytesToString = map('{:02x}'.format, bytesAddress)
+    return  ':'.join(bytesToString).upper()
+
 validateUserOption()

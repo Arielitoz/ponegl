@@ -33,3 +33,5 @@ Ethernet frame ->
     payload - 46byte to 1500byte(IP/ARP frame + padding): main data
 
     CRC - 4 Bytes : frame check to sure that all received data is correctly without any errors
+
+MAC Address : 48 bit : two decimal, separated by a colon
