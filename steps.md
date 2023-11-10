@@ -3,11 +3,13 @@
 - probably add threads or process to make more faster
 - write files, log files
 - add to database consults (?)
+- make a consult based in most common/famous ports
 
-## tcp dump
+## tcp dump .. Packet Sniffer
 - create process and  structure
 - write log file, history
 - add to databases
+- Tried in windows & Linux(Ubuntu): this.works
 
 ## Other things || future steps
 - https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Dynamic,_private_or_ephemeral_ports
