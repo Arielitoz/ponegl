@@ -39,3 +39,4 @@ Ethernet frame ->
 MAC Address : 48 bit : two decimal, separated by a colon
 
 ip header
+    protocol tells us what types of data that package is carrying: focus on ICMP - 1; 6 - TCP; 17 - UDP

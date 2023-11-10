@@ -183,4 +183,39 @@ def packetIpv4(data):
 def getIpv4(address):
     return '.'.join(map(str, address))
 
+# unpacks ICMP packet : Internet control message protocol
+def packetIcmp(data):
+    icmpType, code, checksum = struct.unpack('! B B H', data[:4])
+    return icmpType, code, checksum, data[4:] # 4 to the end
+
+# unpacks TCP segment: Transmission Control protocol /tcp/ip
+# source port, dest port, sequence number, acknow number: flags -> tcp 3-way handshake flags ex: syn, ack, fin
+def segmentTcp(data):
+    (sourcePort, destPort, seqNumber, acknowNumber, offsetReservedFlags) = struct.unpack('! H H L L H', data[:14])
+    # bitwise operators
+    offset = (offsetReservedFlags >> 12) * 4
+    flagUrg = (offsetReservedFlags & 32) >> 5
+    flagAck = (offsetReservedFlags & 16) >> 4
+    flashPsh = (offsetReservedFlags & 8) >> 3
+    flagRst = (offsetReservedFlags & 4) >> 2
+    flagSin = (offsetReservedFlags & 2) >> 1
+    flagFin = offsetReservedFlags & 1
+
+    return sourcePort, destPort, seqNumber, acknowNumber, flagUrg,flagAck, flashPsh, flagRst, flagSin, flagFin, data[offset:] 
+
+# unpacks UDP segment: User datagram protocol
+def segmentUdp(data):
+    sourcePort, destPort, size = struct.unpack('! H H 2x H', data[:8])
+    return sourcePort, destPort, size, data[8:]
+
+# formats text and multi data to display
+def formatLines(prefix, dataString, size=80):
+    size -= len(prefix)
+    if isinstance(dataString, bytes):
+        dataString = ''.join(r'\x{:02x}'.format(byte) for byte in dataString)
+        if size % 2:
+            size -= 1
+    return '\n'.join([prefix + line for line in textwrap.wrap(dataString, size)])
+
+
 validateUserOption()
