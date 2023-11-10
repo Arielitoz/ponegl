@@ -164,10 +164,23 @@ def ethernetFrame(data):
     return getMacAddress(destination_mac), getMacAddress(source_mac), socket.htons(protocol), data[14:]
     # htons convert big-endian/ little-endian &7 data 14: to the end
 
-# return formatted MAC address
+# return formatted MAC address (Ex: AA:BB:CC:DD:EE:FF)
 def getMacAddress(bytesAddress):
     # map() function and iterate
     bytesToString = map('{:02x}'.format, bytesAddress)
     return  ':'.join(bytesToString).upper()
+
+# unpack IPV4 packet, not interested in ARP or something like that - version, ihl(header length), TTL, SRC, DEST, comes before ip payload/data
+# the length of the header is used to determine where data starts, header ends, data begins
+def packetIpv4(data):
+    versionHlength = data[0]
+    version = versionHlength >> 4
+    headerLength = (versionHlength & 15) * 4
+    ttl, protocol, source, destination = struct.unpack('! 8x B B 2x 4s 4s',data[:20]) # the format data is going to be unpackeds
+    return version, headerLength, ttl, protocol, getIpv4(source), getIpv4(destination), data[headerLength:]
+
+# returns formatted IPV4 (Ex: 192.142.000.243)
+def getIpv4(address):
+    return '.'.join(map(str, address))
 
 validateUserOption()
