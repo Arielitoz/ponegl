@@ -1,5 +1,4 @@
-import sys
-import socket
+import sys, socket
 from datetime import datetime
 import time
 import re
@@ -126,7 +125,7 @@ def validateUserOption():
         portScanner()
     elif chooseInput == "2":
         print("\n")
-        print("oi")    
+        packetRoutine() 
     elif chooseInput == "3":
         print("Thank you!")
             
@@ -134,6 +133,28 @@ def validateUserOption():
     else:
         print("Insert a valid option\n\n")
         validateUserOption()
+
+# infinite loop, waiting for packets and extract
+def packetRoutine():
+
+    if sys.platform.lower().startswith("win"):
+        print("Protocol is not supported in Windows System!! Please, try it in another OS")
+        print("\nClosing...")
+        quit()
+        # in windows, try to use ncap or scapy
+    else:
+    # need a socket to have connections with other computers]
+    # AF_PACKET only works in linux
+        print("\nStarting Sniffer - new routine at: " + str(datetime.now()))
+        s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
+        # last one, ntohns compatible with all machines, little endian, big endian
+        while True:
+            rawData , address = s.recvfrom(65536)
+            destinationMac, sourceMac, ethProtocol, data = ethernetFrame(rawData)
+            print('\nEthernet frame: ')
+            # {} placeholders
+            print('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))
+
 
 # unpack ethernet frame
 def ethernetFrame(data):
