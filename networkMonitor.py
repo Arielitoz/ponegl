@@ -155,6 +155,42 @@ def packetRoutine():
             # {} placeholders
             print('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))
 
+            # protocol 8 for IPv4
+            if ethProtocol == 8:
+                (version, headerLength, ttl, protocol, source, destination, data) = packetIpv4(data)
+                print("\nIPv4 Packet: \n")
+                print("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
+                print("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
+
+                # 1 - ICMP
+                if protocol == 1:
+                    icmpType, code, checksum, data = packetIcmp(data)
+                    print("\ICMP Packet: \n")
+                    print("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
+                    print("\nData:\n")
+                    print(formatLines(data))
+                #6 - TCP
+                elif protocol == 6:
+                    (sourcePort, destPort, seqNumber, acknowNumber, flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin) = segmentTcp(data)
+                    print("\nTCP Segment:\n")
+                    print("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
+                    print("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
+                    print('\nFlags:\n')
+                    print('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
+                    print('\nData:\n')
+                    print(formatLines(data))
+                # 17 - UDP
+                elif protocol == 17:
+                    (sourcePort, destPort, size, data) = segmentUdp(data)
+                    print('\nUDP Segment:\n')
+                    print('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
+                # other
+                else:
+                    print('\nOther Data:\n')
+                    print(formatLines(data))
+            else:
+                print('\nOData:\n')
+                print(formatLines(data))
 
 # unpack ethernet frame
 def ethernetFrame(data):
