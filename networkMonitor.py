@@ -1,11 +1,5 @@
-import sys, socket
+import sys, socket, time, re, struct, textwrap, threading, multiprocessing
 from datetime import datetime
-import time
-import re
-import struct
-import textwrap
-import threading
-import multiprocessing
 
 ip_add_pattern = re.compile("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
 # Regular Expression Pattern to extract the number of ports you want to scan. 
@@ -29,6 +23,14 @@ def validateIp():
 
 def scanAllPorts():
     # target = input(str("Target IP: "))
+    currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
+    fileName = "log" + currentTime
+    fileName = fileName.replace(":", "_")
+    try:
+        fileWrite = open(fileName, "x")
+    except OSError as e:
+        print(f"Error creating file: {e}")
+
     validateIp()
     
     # Banner
@@ -40,7 +42,8 @@ def scanAllPorts():
 
     try:
     # 65,535 existents ports / Scan every port on the target IP
-     for port in range(port_min,port_max):
+        
+        for port in range(port_min,port_max):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socket.setdefaulttimeout(0.5)
             #Return open ports
@@ -50,6 +53,9 @@ def scanAllPorts():
             # nwThread.join()
             if response == 0:
                 print("[*] Port {} is open".format(port))
+                fileWrite.open(fileName, "a")
+                fileWrite.write("\nPort {} is open".format(port))
+                fileWrite.close()
                 s.close()
         
         # Make a variable to count how much time takes, ms, ex: print("\nScanning ended at: " + str(datetime.now()))
@@ -65,6 +71,15 @@ def scanAllPorts():
 def scanRangedPorts():
     validateIp()
 
+    #creating file; verify srftime
+    currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
+    fileName = "log" + currentTime
+    fileName = fileName.replace(":", "_")
+    try:
+        fileWrite = open(fileName, "x")
+    except OSError as e:
+        print(f"Error creating file: {e}")
+    
     while True:
     # You can scan 0-65535 ports. This scanner is basic and doesn't use multithreading so scanning all 
     # the ports is not advised.
@@ -99,6 +114,8 @@ def scanRangedPorts():
         for port in openPorts:
             # We use an f string to easily format the string with variables so we don't have to do concatenation.
             print(f"Port {port} is open on {target}.")
+            fileWrite.write(f"\nPort {port} is open on {target}.")
+        fileWrite.close()
 
     endTime = time.time()
     processTime = (endTime - startTime) * 1000
