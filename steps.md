@@ -13,6 +13,8 @@
 
 ## Other things || future steps
 - https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Dynamic,_private_or_ephemeral_ports
+- write files to port scanner(sniffer) & tcp dump
+- save data to database
 
 
 
