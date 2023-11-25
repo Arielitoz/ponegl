@@ -190,7 +190,7 @@ def packetRoutine():
                 elif protocol == 6:
                     print(data)
                     print(segmentTcp(data))
-                    (sourcePort, destPort, seqNumber, acknowNumber, flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin) = segmentTcp(data)
+                    (sourcePort, destPort, seqNumber, acknowNumber, flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin) = segmentTcp(data)[:10]
                     print("\nTCP Segment:\n")
                     print("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
                     print("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
