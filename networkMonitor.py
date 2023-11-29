@@ -1,6 +1,7 @@
 import sys, socket, time, re, struct, textwrap, threading, multiprocessing
 from datetime import datetime
 
+spacing = '\t\t\t '
 ip_add_pattern = re.compile("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
 # Regular Expression Pattern to extract the number of ports you want to scan. 
 port_range_pattern = re.compile("([0-9]+)-([0-9]+)")
@@ -185,7 +186,7 @@ def packetRoutine():
                     print("\ICMP Packet: \n")
                     print("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
                     print("\nData:\n")
-                    print(formatLines(data))
+                    print(formatLines(spacing, data))
                 #6 - TCP
                 elif protocol == 6:
                     print(data)
@@ -197,7 +198,7 @@ def packetRoutine():
                     print('\nFlags:\n')
                     print('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
                     print('\nData:\n')
-                    print(formatLines(data))
+                    print(formatLines(spacing, data))
                 # 17 - UDP
                 elif protocol == 17:
                     (sourcePort, destPort, size, data) = segmentUdp(data)
@@ -206,10 +207,10 @@ def packetRoutine():
                 # other
                 else:
                     print('\nOther Data:\n')
-                    print(formatLines(data))
+                    print(formatLines(spacing, data))
             else:
                 print('\nOData:\n')
-                print(formatLines(data))
+                print(formatLines(spacing,data))
 
 # unpack ethernet frame
 def ethernetFrame(data):
