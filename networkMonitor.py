@@ -257,9 +257,7 @@ def packetRoutine():
 
                 fileWrite.write("\n====================")
                 fileWrite.write('\nEthernet frame: ')
-                fileWrite.write('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))
-                fileWrite.write("\n====================")
-                
+                fileWrite.write('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))                
 
                 # protocol 8 for IPv4
                 if ethProtocol == 8:
@@ -272,7 +270,6 @@ def packetRoutine():
                     fileWrite.write("\nIPv4 Packet: \n")
                     fileWrite.write("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
                     fileWrite.write("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
-                    fileWrite.write("\n====================")
 
                     # 1 - ICMP
                     if protocol == 1:
@@ -287,7 +284,6 @@ def packetRoutine():
                         fileWrite.write("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
                         fileWrite.write("\nICMP Data:\n")
                         fileWrite.write(formatLines(spacing, data))
-                        fileWrite.write("\n====================")
 
                     #6 - TCP
                     elif protocol == 6:
@@ -310,7 +306,6 @@ def packetRoutine():
                         fileWrite.write('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
                         fileWrite.write('\nTCP Data:\n')
                         fileWrite.write(formatLines(spacing, data))
-                        fileWrite.write("\n====================")
 
                     # 17 - UDP
                     elif protocol == 17:
@@ -321,7 +316,6 @@ def packetRoutine():
                         fileWrite.write("\n====================")
                         fileWrite.write('\nUDP Segment:\n')
                         fileWrite.write('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
-                        fileWrite.write("\n====================")
                     # other
                     else:
                         print("---"*30)
@@ -331,7 +325,6 @@ def packetRoutine():
                         fileWrite.write("\n====================")
                         fileWrite.write('\nOTHER DATA:\n')
                         fileWrite.write(formatLines(spacing, data))
-                        fileWrite.write("\n====================")
                         
                 else:
                     print("---"*30)
@@ -340,11 +333,9 @@ def packetRoutine():
 
                     fileWrite.write("\n====================")
                     fileWrite.write('\nDATA:\n')
-                    fileWrite.write(formatLines(spacing,data))
-                    fileWrite.write("\n====================")
+                    fileWrite.write(formatLines(spacing,data))  
 
     except KeyboardInterrupt:
-        time.sleep(0.5)
         fileWrite.close()
         time.sleep(1)
         print("\nStopping program...Thanks for the packets.")
