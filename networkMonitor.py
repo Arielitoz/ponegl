@@ -154,63 +154,69 @@ def validateUserOption():
 
 # infinite loop, waiting for packets and extract
 def packetRoutine():
+    try:
+        if sys.platform.lower().startswith("win"):
+            print("Protocol is not supported in Windows System!! Please, try it in another OS")
+            print("\nClosing...")
+            quit()
+            # in windows, try to use ncap or scapy
+        else:
+        # need a socket to have connections with other computers]
+        # AF_PACKET only works in linux
+            print("\nStarting Sniffer - new routine at: " + str(datetime.now()))
+            s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
+            # last one, ntohns compatible with all machines, little endian, big endian
+            while True:
+                rawData , address = s.recvfrom(65536)
+                destinationMac, sourceMac, ethProtocol, data = ethernetFrame(rawData)
+                print('\nEthernet frame: ')
+                # {} placeholders
+                print('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))
 
-    if sys.platform.lower().startswith("win"):
-        print("Protocol is not supported in Windows System!! Please, try it in another OS")
-        print("\nClosing...")
-        quit()
-        # in windows, try to use ncap or scapy
-    else:
-    # need a socket to have connections with other computers]
-    # AF_PACKET only works in linux
-        print("\nStarting Sniffer - new routine at: " + str(datetime.now()))
-        s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
-        # last one, ntohns compatible with all machines, little endian, big endian
-        while True:
-            rawData , address = s.recvfrom(65536)
-            destinationMac, sourceMac, ethProtocol, data = ethernetFrame(rawData)
-            print('\nEthernet frame: ')
-            # {} placeholders
-            print('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))
+                # protocol 8 for IPv4
+                if ethProtocol == 8:
+                    (version, headerLength, ttl, protocol, source, destination, data) = packetIpv4(data)
+                    print("\nIPv4 Packet: \n")
+                    print("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
+                    print("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
 
-            # protocol 8 for IPv4
-            if ethProtocol == 8:
-                (version, headerLength, ttl, protocol, source, destination, data) = packetIpv4(data)
-                print("\nIPv4 Packet: \n")
-                print("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
-                print("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
-
-                # 1 - ICMP
-                if protocol == 1:
-                    icmpType, code, checksum, data = packetIcmp(data)
-                    print("\ICMP Packet: \n")
-                    print("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
-                    print("\nData:\n")
-                    print(formatLines(spacing, data))
-                #6 - TCP
-                elif protocol == 6:
-                    print(data)
-                    print(segmentTcp(data))
-                    (sourcePort, destPort, seqNumber, acknowNumber, flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin) = segmentTcp(data)[:10]
-                    print("\nTCP Segment:\n")
-                    print("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
-                    print("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
-                    print('\nFlags:\n')
-                    print('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
-                    print('\nData:\n')
-                    print(formatLines(spacing, data))
-                # 17 - UDP
-                elif protocol == 17:
-                    (sourcePort, destPort, size, data) = segmentUdp(data)
-                    print('\nUDP Segment:\n')
-                    print('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
-                # other
+                    # 1 - ICMP
+                    if protocol == 1:
+                        icmpType, code, checksum, data = packetIcmp(data)
+                        print("\ICMP Packet: \n")
+                        print("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
+                        print("\nData:\n")
+                        print(formatLines(spacing, data))
+                    #6 - TCP
+                    elif protocol == 6:
+                        print(data)
+                        print(segmentTcp(data))
+                        (sourcePort, destPort, seqNumber, acknowNumber, flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin) = segmentTcp(data)[:10]
+                        print("\nTCP Segment:\n")
+                        print("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
+                        print("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
+                        print('\nFlags:\n')
+                        print('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
+                        print('\nData:\n')
+                        print(formatLines(spacing, data))
+                    # 17 - UDP
+                    elif protocol == 17:
+                        (sourcePort, destPort, size, data) = segmentUdp(data)
+                        print('\nUDP Segment:\n')
+                        print('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
+                    # other
+                    else:
+                        print('\nOther Data:\n')
+                        print(formatLines(spacing, data))
                 else:
-                    print('\nOther Data:\n')
-                    print(formatLines(spacing, data))
-            else:
-                print('\nOData:\n')
-                print(formatLines(spacing,data))
+                    print('\nData:\n')
+                    print(formatLines(spacing,data))
+
+    except KeyboardInterrupt:
+        print("\nStopping program...Thanks for the packets.")
+        print("\nWe´re leaving now, bye!")
+        sys.exit()
+
 
 # unpack ethernet frame
 def ethernetFrame(data):

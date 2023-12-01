@@ -11,3 +11,4 @@ A wild repository about some infosec tools in python
 - [ ] Format data response
 - [ ] Write log file
 - [ ] Insert & save data flow into database
+- [ ] Make packet sniffer for windows w/ Scapy
