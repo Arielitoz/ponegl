@@ -223,6 +223,17 @@ def validateUserOption():
 
 # infinite loop, waiting for packets and extract
 def packetRoutine():
+
+    #creating file; verify srftime
+    currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
+    fileName = "log-sniffer-" + currentTime
+    fileName = fileName.replace(":", "_")
+
+    try:
+        fileWrite = open(fileName, "x")
+    except OSError as e:
+        print(f"Error creating file: {e}")
+
     try:
         if sys.platform.lower().startswith("win"):
             time.sleep(1)
@@ -233,6 +244,7 @@ def packetRoutine():
         else:
         # need a socket to have connections with other computers]
         # AF_PACKET only works in linux
+            fileWrite.write(f"- - - Sniffing Data at - - -\n")
             print("\nStarting Sniffer - new routine at: " + str(datetime.now()))
             s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
             # last one, ntohns compatible with all machines, little endian, big endian
@@ -250,6 +262,12 @@ def packetRoutine():
                     print("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
                     print("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
 
+                    fileWrite.write("==========")
+                    fileWrite.write("\nIPv4 Packet: \n")
+                    fileWrite.write("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
+                    fileWrite.write("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
+                    fileWrite.write("==========")
+
                     # 1 - ICMP
                     if protocol == 1:
                         icmpType, code, checksum, data = packetIcmp(data)
@@ -257,6 +275,14 @@ def packetRoutine():
                         print("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
                         print("\nICMP Data:\n")
                         print(formatLines(spacing, data))
+
+                        fileWrite.write("==========")
+                        fileWrite.write("\nICMP Packet: \n")
+                        fileWrite.write("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
+                        fileWrite.write("\nICMP Data:\n")
+                        fileWrite.write(formatLines(spacing, data))
+                        fileWrite.write("==========")
+
                     #6 - TCP
                     elif protocol == 6:
                         # print(data)
@@ -269,22 +295,51 @@ def packetRoutine():
                         print('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
                         print('\nTCP Data:\n')
                         print(formatLines(spacing, data))
+
+                        fileWrite.write("==========")
+                        fileWrite.write("\nTCP Segment:\n")
+                        fileWrite.write("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
+                        fileWrite.write("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
+                        fileWrite.write('\nFlags:\n')
+                        fileWrite.write('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
+                        fileWrite.write('\nTCP Data:\n')
+                        fileWrite.write(formatLines(spacing, data))
+                        fileWrite.write("==========")
+
                     # 17 - UDP
                     elif protocol == 17:
                         (sourcePort, destPort, size, data) = segmentUdp(data)
                         print('\nUDP Segment:\n')
                         print('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
+
+                        fileWrite.write("==========")
+                        fileWrite.write('\nUDP Segment:\n')
+                        fileWrite.write('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
+                        fileWrite.write("==========")
                     # other
                     else:
                         print("---"*30)
                         print('\nOTHER DATA:\n')
                         print(formatLines(spacing, data))
+
+                        fileWrite.write("==========")
+                        fileWrite.write('\nOTHER DATA:\n')
+                        fileWrite.write(formatLines(spacing, data))
+                        fileWrite.write("==========")
+                        
                 else:
                     print("---"*30)
                     print('\nDATA:\n')
                     print(formatLines(spacing,data))
 
+                    fileWrite.write("==========")
+                    fileWrite.write('\nDATA:\n')
+                    fileWrite.write(formatLines(spacing,data))
+                    fileWrite.write("==========")
+
     except KeyboardInterrupt:
+        time.sleep(0.5)
+        fileWrite.close()
         time.sleep(1)
         print("\nStopping program...Thanks for the packets.")
         time.sleep(0.5)
