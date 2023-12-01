@@ -311,11 +311,17 @@ def packetRoutine():
                         hexData = data.hex()
                         replacedData = hexData.replace("\\","")
                         try:
+                            binarys = []
                             byteData = bytes.fromhex(replacedData)
-                            decodedText = byteData.decode("utf-8")
+                            binaryData = binarys.append(" ".join(f"{byte:08b}" for byte in byteData ))
+                            
+                            binarys = [binary.strip("'") for bin in binarys]
+                            intValues = [int(binary,2) for binary in binarys]
+                            asciiData = ''.join(chr(value) for value in intValues)
+                            print(asciiData)
                             # fileWrite.write(decodedText)
-                        except ValueError as e:
-                            print(f"Erro: {e}")
+                        except ValueError as err:
+                            print(f"Value Error: {err}")
                     # 17 - UDP
                     elif protocol == 17:
                         (sourcePort, destPort, size, data) = segmentUdp(data)
