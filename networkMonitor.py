@@ -313,12 +313,13 @@ def packetRoutine():
                         try:
                             binarys = []
                             byteData = bytes.fromhex(replacedData)
-                            binaryData = binarys.append(" ".join(f"'{byte:08b}'" for byte in byteData ).replace(" ", ","))
+                            binaryData = " ".join(f"'{byte:08b}'" for byte in byteData ).replace(" ", ",")
                             
-                            binarys = [bin.strip("'") for bin in binarys]
-                            intValues = [int(binary,2) for binary in binarys]
-                            asciiData = ''.join(chr(value) for value in intValues)
-                            print(asciiData)
+                            # binarys = [bin.strip("'") for bin in binarys]
+                            # intValues = [int(binary,2) for binary in binarys]
+                            # asciiData = ''.join(chr(value) for value in intValues)
+                            fileWrite.write("\nTCP DATA bin\n:")
+                            fileWrite.write(f"{binaryData}")
                             # fileWrite.write(decodedText)
                         except ValueError as err:
                             print(f"Value Error: {err}")
