@@ -1,4 +1,4 @@
-import sys, socket, time, re, struct, textwrap, threading, multiprocessing
+import sys, socket, time, re, struct, textwrap, threading, multiprocessing, os
 from datetime import datetime
 
 spacing = '\t\t\t '
@@ -74,7 +74,7 @@ def scanRangedPorts():
 
     #creating file; verify srftime
     currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
-    fileName = "log" + currentTime
+    fileName = "log-ports-" + currentTime
     fileName = fileName.replace(":", "_")
     try:
         fileWrite = open(fileName, "x")
@@ -95,7 +95,6 @@ def scanRangedPorts():
     print("\nScanning started at: " + str(datetime.now()))
     print("\n")
     for port in range(port_min, port_max + 1):
-        
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(0.5)
@@ -105,6 +104,11 @@ def scanRangedPorts():
             # We don't need to do anything here. If we were interested in the closed ports we'd put something here.
             pass
     if len(openPorts) == 0:
+        time.sleep(0.5)
+        fileWrite.close()
+        if os.path.isfile(fileName) and os.path.getsize(fileName) == 0:
+            os.remove(fileName)
+        time.sleep(0.5)
         print("\nCan´t detect any open ports in that range")
         confirmAgain = input("Insert again? Y/N\nYour choice: ")
         if confirmAgain.upper() == "Y":
@@ -112,15 +116,19 @@ def scanRangedPorts():
         else:
             print("\nThank you, we´re exiting now")
     else:
+        fileWrite.write(f"- - - Open Ports on target IP: [ {target} ] - - - \n\n")
         for port in openPorts:
             # We use an f string to easily format the string with variables so we don't have to do concatenation.
             print(f"Port {port} is open on {target}.")
-            fileWrite.write(f"\nPort {port} is open on {target}.")
+            fileWrite.write(f"PORT: {port}\n")
         fileWrite.close()
 
     endTime = time.time()
     processTime = (endTime - startTime) * 1000
+    time.sleep(0.5)
     print(f"\nprocess take {processTime:.2f} in ms.")
+    print("\nExiting now...")
+    sys.exit()
 
 def portScanner():
 
@@ -146,8 +154,7 @@ def validateUserOption():
         packetRoutine() 
     elif chooseInput == "3":
         print("Thank you!")
-            
-        quit()
+        sys.exit()
     else:
         print("Insert a valid option\n\n")
         validateUserOption()
