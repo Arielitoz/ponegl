@@ -313,7 +313,7 @@ def packetRoutine():
                         try:
                             binarys = []
                             byteData = bytes.fromhex(replacedData)
-                            binaryData = binarys.append(" ".join(f"{byte:08b}" for byte in byteData ))
+                            binaryData = binarys.append(" ".join(f"'{byte:08b}'" for byte in byteData ).replace(" ", ","))
                             
                             binarys = [bin.strip("'") for bin in binarys]
                             intValues = [int(binary,2) for binary in binarys]
