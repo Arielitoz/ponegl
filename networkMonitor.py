@@ -255,6 +255,12 @@ def packetRoutine():
                 # {} placeholders
                 print('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))
 
+                fileWrite.write("\n====================")
+                fileWrite.write('\nEthernet frame: ')
+                fileWrite.write('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))
+                fileWrite.write("\n====================")
+                
+
                 # protocol 8 for IPv4
                 if ethProtocol == 8:
                     (version, headerLength, ttl, protocol, source, destination, data) = packetIpv4(data)
@@ -262,11 +268,11 @@ def packetRoutine():
                     print("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
                     print("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
 
-                    fileWrite.write("==========")
+                    fileWrite.write("\n====================")
                     fileWrite.write("\nIPv4 Packet: \n")
                     fileWrite.write("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
                     fileWrite.write("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
-                    fileWrite.write("==========")
+                    fileWrite.write("\n====================")
 
                     # 1 - ICMP
                     if protocol == 1:
@@ -276,12 +282,12 @@ def packetRoutine():
                         print("\nICMP Data:\n")
                         print(formatLines(spacing, data))
 
-                        fileWrite.write("==========")
+                        fileWrite.write("\n====================")
                         fileWrite.write("\nICMP Packet: \n")
                         fileWrite.write("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
                         fileWrite.write("\nICMP Data:\n")
                         fileWrite.write(formatLines(spacing, data))
-                        fileWrite.write("==========")
+                        fileWrite.write("\n====================")
 
                     #6 - TCP
                     elif protocol == 6:
@@ -296,7 +302,7 @@ def packetRoutine():
                         print('\nTCP Data:\n')
                         print(formatLines(spacing, data))
 
-                        fileWrite.write("==========")
+                        fileWrite.write("\n====================")
                         fileWrite.write("\nTCP Segment:\n")
                         fileWrite.write("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
                         fileWrite.write("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
@@ -304,7 +310,7 @@ def packetRoutine():
                         fileWrite.write('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
                         fileWrite.write('\nTCP Data:\n')
                         fileWrite.write(formatLines(spacing, data))
-                        fileWrite.write("==========")
+                        fileWrite.write("\n====================")
 
                     # 17 - UDP
                     elif protocol == 17:
@@ -312,30 +318,30 @@ def packetRoutine():
                         print('\nUDP Segment:\n')
                         print('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
 
-                        fileWrite.write("==========")
+                        fileWrite.write("\n====================")
                         fileWrite.write('\nUDP Segment:\n')
                         fileWrite.write('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
-                        fileWrite.write("==========")
+                        fileWrite.write("\n====================")
                     # other
                     else:
                         print("---"*30)
                         print('\nOTHER DATA:\n')
                         print(formatLines(spacing, data))
 
-                        fileWrite.write("==========")
+                        fileWrite.write("\n====================")
                         fileWrite.write('\nOTHER DATA:\n')
                         fileWrite.write(formatLines(spacing, data))
-                        fileWrite.write("==========")
+                        fileWrite.write("\n====================")
                         
                 else:
                     print("---"*30)
                     print('\nDATA:\n')
                     print(formatLines(spacing,data))
 
-                    fileWrite.write("==========")
+                    fileWrite.write("\n====================")
                     fileWrite.write('\nDATA:\n')
                     fileWrite.write(formatLines(spacing,data))
-                    fileWrite.write("==========")
+                    fileWrite.write("\n====================")
 
     except KeyboardInterrupt:
         time.sleep(0.5)
