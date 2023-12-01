@@ -25,7 +25,7 @@ def validateIp():
 def scanAllPorts():
     # target = input(str("Target IP: "))
     currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
-    fileName = "log" + currentTime
+    fileName = "log-ports-" + currentTime
     fileName = fileName.replace(":", "_")
     try:
         fileWrite = open(fileName, "x")
@@ -42,6 +42,7 @@ def scanAllPorts():
     print('_' * 50)
 
     try:
+        fileWrite.write(f"- - - All Open Ports on target IP: [ {target} ] - - - \n\n")
     # 65,535 existents ports / Scan every port on the target IP
         
         for port in range(port_min,port_max):
@@ -52,16 +53,21 @@ def scanAllPorts():
             # nwThread = threading.Thread(target=s.connect_ex((target, port)))
             # nwThread.start()
             # nwThread.join()
+            # connect_ex/connect == 0, success
             if response == 0:
-                print("[*] Port {} is open".format(port))
-                fileWrite.open(fileName, "a")
-                fileWrite.write("\nPort {} is open".format(port))
-                fileWrite.close()
+                print("Port: [{}] is Open".format(port))
+                fileWrite.write(f"Open Port: [{port}]\n")
                 s.close()
-        
+
+        fileWrite.close()
+        removeEmpytFile(fileName)        
         # Make a variable to count how much time takes, ms, ex: print("\nScanning ended at: " + str(datetime.now()))
 
     except KeyboardInterrupt:
+        fileWrite.close()
+        if os.path.isfile(fileName):
+            os.remove(fileName)
+        time.sleep(1)
         print("\n Exiting :(")
         sys.exit()
 
@@ -106,8 +112,7 @@ def scanRangedPorts():
     if len(openPorts) == 0:
         time.sleep(0.5)
         fileWrite.close()
-        if os.path.isfile(fileName) and os.path.getsize(fileName) == 0:
-            os.remove(fileName)
+        removeEmpytFile(fileName)
         time.sleep(0.5)
         print("\nCan´t detect any open ports in that range")
         confirmAgain = input("Insert again? Y/N\nYour choice: ")
@@ -130,27 +135,84 @@ def scanRangedPorts():
     print("\nExiting now...")
     sys.exit()
 
-def portScanner():
+def scanCommonPorts():
+    validateIp()
 
+    commonPorts = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
+    
+    #creating file; verify srftime
+    currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
+    fileName = "log-ports-" + currentTime
+    fileName = fileName.replace(":", "_")
+    try:
+        fileWrite = open(fileName, "x")
+    except OSError as e:
+        print(f"Error creating file: {e}")
+    
+    startTime = time.time()
+    print("\nScanning started at: " + str(datetime.now()))
     print("\n")
+    for port in commonPorts:
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(0.5)
+                s.connect((target,port))
+                openPorts.append(port)
+        except:
+            # closed ports,  deal with here
+            pass
+    if len(openPorts) == 0:
+        time.sleep(0.5)
+        fileWrite.close()
+        removeEmpytFile(fileName)
+        time.sleep(0.5)
+        print("\nNone of the common ports listed are open")
+        time.sleep(0.5)
+        print("\nThank you, we´re exiting now")
+        time.sleep(0.5)
+        sys.exit()
+    else:
+        fileWrite.write(f"- - - Open Common Ports on target IP: [ {target} ] - - - \n\n")
+        for port in openPorts:
+            # We use an f string to easily format the string with variables so we don't have to do concatenation.
+            print(f"Port {port} is open on {target}.")
+            fileWrite.write(f"PORT: {port}\n")
+        fileWrite.close()
+
+    endTime = time.time()
+    processTime = (endTime - startTime) * 1000
+    time.sleep(0.5)
+    print(f"\nprocess take {processTime:.2f} in ms.")
+    print("\nExiting now...")
+    sys.exit()
+
+def portScanner():
+    time.sleep(0.5)
+    print('\n')
     print("=" * 50)
-    chooseTypeScan = input("[ --- Type a scan option: ---] \n1- Target IP all Ports;\n2-Specific Port;\n3-Range Ports\nYour option: ")
+    chooseTypeScan = input("[ --- Scan option: ---] \n1 - Scan: All Ports\n2 - Ranged Ports\n3 - Common Ports\nYour option:> ")
+    time.sleep(0.5)
     if chooseTypeScan == "1":
-        # print("PORT SCANNER - Python\n")
         scanAllPorts()
     elif chooseTypeScan == "2":
         scanRangedPorts()
-        # quit()
+    elif chooseTypeScan == "3":
+        scanCommonPorts()
     else:
         print("Insert a valid Option")
         portScanner()
 
+def removeEmpytFile(name):
+    if os.path.isfile(name) and os.path.getsize(name) == 0:
+        os.remove(name)
+
 def validateUserOption():
-    chooseInput = input("[ --- Choose an option: --- ]\n1 - Port Scanner;\n2 - TCP Dump/Packet Sniffer\n3 - Close program\nYour option: ")
+    chooseInput = input("[ --- Choose an option: --- ]\n1 - Port Scanner\n2 - Packet Sniffer\n3 - Close program\nYour option:> ")
     if chooseInput == "1":
+        time.sleep(0.5)
         portScanner()
     elif chooseInput == "2":
-        print("\n")
+        time.sleep(0.5)
         packetRoutine() 
     elif chooseInput == "3":
         print("Thank you!")
