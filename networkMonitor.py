@@ -307,13 +307,15 @@ def packetRoutine():
                         fileWrite.write('\nTCP Data:\n')
                         fileWrite.write(formatLines(spacing, data))
 
-
-                        dataText = str(data)
-                        byteData = bytes.fromhex(dataText)
-                        decodedText = byteData.decode("utf-8")
-                        fileWrite.write(decodedText)
-                        print(decodedText)
-
+                        # hexData = (str(data)[2:])
+                        hexData = data.hex()
+                        replacedData = hexData.replace("\\","")
+                        try:
+                            byteData = bytes.fromhex(replacedData)
+                            decodedText = byteData.decode("utf-8")
+                            # fileWrite.write(decodedText)
+                        except ValueError as e:
+                            print(f"Erro: {e}")
                     # 17 - UDP
                     elif protocol == 17:
                         (sourcePort, destPort, size, data) = segmentUdp(data)
