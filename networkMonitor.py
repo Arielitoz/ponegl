@@ -307,7 +307,7 @@ def packetRoutine():
                         fileWrite.write('\nTCP Data:\n')
                         fileWrite.write(formatLines(spacing, data))
 
-                        byteData = bytes.fromhex(data)
+                        byteData = bytes.fromhex(str(data))
                         decodedText = byteData.decode("utf-8")
                         fileWrite.write(decodedText)
                         print(decodedText)
