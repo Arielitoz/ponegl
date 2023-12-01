@@ -156,9 +156,10 @@ def validateUserOption():
 def packetRoutine():
     try:
         if sys.platform.lower().startswith("win"):
+            time.sleep(1)
             print("Protocol is not supported in Windows System!! Please, try it in another OS")
             print("\nClosing...")
-            quit()
+            sys.exit()
             # in windows, try to use ncap or scapy
         else:
         # need a socket to have connections with other computers]
@@ -185,19 +186,19 @@ def packetRoutine():
                         icmpType, code, checksum, data = packetIcmp(data)
                         print("\ICMP Packet: \n")
                         print("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
-                        print("\nData:\n")
+                        print("\nICMP Data:\n")
                         print(formatLines(spacing, data))
                     #6 - TCP
                     elif protocol == 6:
-                        print(data)
-                        print(segmentTcp(data))
+                        # print(data)
+                        # print(segmentTcp(data))
                         (sourcePort, destPort, seqNumber, acknowNumber, flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin) = segmentTcp(data)[:10]
                         print("\nTCP Segment:\n")
                         print("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
                         print("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
                         print('\nFlags:\n')
                         print('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
-                        print('\nData:\n')
+                        print('\nTCP Data:\n')
                         print(formatLines(spacing, data))
                     # 17 - UDP
                     elif protocol == 17:
@@ -206,15 +207,20 @@ def packetRoutine():
                         print('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
                     # other
                     else:
-                        print('\nOther Data:\n')
+                        print("---"*30)
+                        print('\nOTHER DATA:\n')
                         print(formatLines(spacing, data))
                 else:
-                    print('\nData:\n')
+                    print("---"*30)
+                    print('\nDATA:\n')
                     print(formatLines(spacing,data))
 
     except KeyboardInterrupt:
+        time.sleep(1)
         print("\nStopping program...Thanks for the packets.")
+        time.sleep(0.5)
         print("\nWe´re leaving now, bye!")
+        time.sleep(0.5)
         sys.exit()
 
 
