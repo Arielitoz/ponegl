@@ -139,7 +139,7 @@ def scanCommonPorts():
     validateIp()
 
     commonPorts = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
-    
+    #anotherPorts = 445, 5040,9009,58541,9180,58541,60531,60904
     #creating file; verify srftime
     currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
     fileName = "log-ports-" + currentTime
