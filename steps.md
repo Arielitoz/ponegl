@@ -1,4 +1,11 @@
 # Next steps
+
+## To do:
+- modularize/segment the project
+- use multiprocessing / multithreading for fast scans
+- optimize
+- remove bad code
+
 ## nmap python - port scanner
 - probably add threads or process to make more faster
 - write files, log files
