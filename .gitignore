@@ -1,2 +1,3 @@
 # ignore pycache files
-/funcs/__pycache__/
+./funcs/__pycache__/
+steps.md
