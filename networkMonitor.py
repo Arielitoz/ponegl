@@ -1,9 +1,9 @@
 import sys, socket, time, re, struct, textwrap, threading, multiprocessing, os
+import funcs.validate
 from datetime import datetime
 
 spacing = '\t\t\t '
-ip_add_pattern = re.compile("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
-# Regular Expression Pattern to extract the number of ports you want to scan. 
+ 
 port_range_pattern = re.compile("([0-9]+)-([0-9]+)")
 # You have to specify <lowest_port>-<highest_port> (ex 10-100)
 
@@ -13,14 +13,6 @@ port_min = 0
 port_max = 65535
 
 openPorts = []
-
-def validateIp():
-    global target
-    while True:
-        target = input(str("\nPlease enter the ip address that you want to scan: "))
-        if ip_add_pattern.search(target):
-            print(f"{target} is a valid ip address")
-            return target
 
 def scanAllPorts():
     # target = input(str("Target IP: "))
@@ -136,7 +128,7 @@ def scanRangedPorts():
     sys.exit()
 
 def scanCommonPorts():
-    validateIp()
+    funcs.validate.validateIp()
 
     commonPorts = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
     #anotherPorts = 445, 5040,9009,58541,9180,58541,60531,60904
