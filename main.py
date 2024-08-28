@@ -128,12 +128,11 @@ def scanRangedPorts():
     sys.exit()
 
 def scanCommonPorts():
-    funcs.validate.validateIp()
+    target = funcs.validate.validateIp()
 
     commonPorts = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
     #anotherPorts = 445, 5040,9009,58541,9180,58541,60531,60904
     # commonPorts = [27036,49668,65001,58056,57196,58028,61542,139,9009]
-    # 27036, 49668 - 0.0.0.0 / 65001,58056,57196 - 127.0.0.1 / 58028, 58062, 61542 - 192.168.16.1 / 139, 9009 - 192.168.56.1
     #creating file; verify srftime
     currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
     fileName = "log-ports-" + currentTime
@@ -174,9 +173,9 @@ def scanCommonPorts():
         fileWrite.close()
 
     endTime = time.time()
-    processTime = (endTime - startTime) * 1000
+    processTime = (endTime - startTime)
     time.sleep(0.5)
-    print(f"\nprocess take {processTime:.2f} in ms.")
+    print(f"\nprocess took [{processTime:.2f}s] total.")
     print("\nExiting now...")
     sys.exit()
 
@@ -416,5 +415,5 @@ def formatLines(prefix, dataString, size=80):
             size -= 1
     return '\n'.join([prefix + line for line in textwrap.wrap(dataString, size)])
 
-
-validateUserOption()
+if __name__ == '__main__':
+    validateUserOption()

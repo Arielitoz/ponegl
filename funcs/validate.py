@@ -9,4 +9,4 @@ def validateIp():
         target = input(str("\nPlease enter the ip address that you want to scan: "))
         if ip_add_pattern.search(target):
             print(f"{target} is a valid ip address")
-            return target
+        return target

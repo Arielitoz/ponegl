@@ -1,3 +1,4 @@
 # ignore pycache files
 /funcs/__pycache__/
 steps.md
+log-ports-*
