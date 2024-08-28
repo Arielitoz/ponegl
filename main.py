@@ -137,6 +137,7 @@ def scanCommonPorts():
     currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
     fileName = "log-ports-" + currentTime
     fileName = fileName.replace(":", "_")
+    currentTimeStr = datetime.now().strftime("%c")
     try:
         fileWrite = open(fileName, "x")
     except OSError as e:
@@ -165,11 +166,13 @@ def scanCommonPorts():
         time.sleep(0.5)
         sys.exit()
     else:
-        fileWrite.write(f"- - - Open Common Ports on target IP: [ {target} ] - - - \n\n")
+        fileWrite.write(f"- - - Open Common Ports - - - \n\n")
+        fileWrite.write(f"Target IP: [ {target} ]\n")
+        fileWrite.write(f"At time: [ {currentTimeStr} ] | [ {currentTime} ]\n\n")
         for port in openPorts:
             # We use an f string to easily format the string with variables so we don't have to do concatenation.
             print(f"Port {port} is open on {target}.")
-            fileWrite.write(f"PORT: {port}\n")
+            fileWrite.write(f"PORT: [ {port} ]\n")
         fileWrite.close()
 
     endTime = time.time()
