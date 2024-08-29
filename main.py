@@ -3,7 +3,7 @@ import funcs.validate
 from datetime import datetime
 
 spacing = '\t\t\t '
- 
+# Regular Expression Pattern to extract the number of ports you want to scan.
 port_range_pattern = re.compile("([0-9]+)-([0-9]+)")
 # You have to specify <lowest_port>-<highest_port> (ex 10-100)
 
@@ -12,15 +12,15 @@ target = ""
 port_min = 0
 port_max = 65535
 
-openPorts = []
+open_ports = []
 
-def scanAllPorts():
+def scan_all_ports():
     # target = input(str("Target IP: "))
-    currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
-    fileName = "log-ports-" + currentTime
-    fileName = fileName.replace(":", "_")
+    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
+    file_name = "log-ports-" + current_time
+    file_name = file_name.replace(":", "_")
     try:
-        fileWrite = open(fileName, "x")
+        file_write = open(file_name, "x")
     except OSError as e:
         print(f"Error creating file: {e}")
 
@@ -34,7 +34,7 @@ def scanAllPorts():
     print('_' * 50)
 
     try:
-        fileWrite.write(f"- - - All Open Ports on target IP: [ {target} ] - - - \n\n")
+        file_write.write(f"- - - All Open Ports on target IP: [ {target} ] - - - \n\n")
     # 65,535 existents ports / Scan every port on the target IP
         
         for port in range(port_min,port_max):
@@ -48,17 +48,17 @@ def scanAllPorts():
             # connect_ex/connect == 0, success
             if response == 0:
                 print("Port: [{}] is Open".format(port))
-                fileWrite.write(f"Open Port: [{port}]\n")
+                file_write.write(f"Open Port: [{port}]\n")
                 s.close()
 
-        fileWrite.close()
-        removeEmpytFile(fileName)        
+        file_write.close()
+        remove_empyt_file(file_name)        
         # Make a variable to count how much time takes, ms, ex: print("\nScanning ended at: " + str(datetime.now()))
 
     except KeyboardInterrupt:
-        fileWrite.close()
-        if os.path.isfile(fileName):
-            os.remove(fileName)
+        file_write.close()
+        if os.path.isfile(file_name):
+            os.remove(file_name)
         time.sleep(1)
         print("\n Exiting :(")
         sys.exit()
@@ -67,15 +67,15 @@ def scanAllPorts():
         print("\n Host not responding :(")
         sys.exit()
 
-def scanRangedPorts():
+def scan_ranged_ports():
     validateIp()
 
     #creating file; verify srftime
-    currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
-    fileName = "log-ports-" + currentTime
-    fileName = fileName.replace(":", "_")
+    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
+    file_name = "log-ports-" + current_time
+    file_name = file_name.replace(":", "_")
     try:
-        fileWrite = open(fileName, "x")
+        file_write = open(file_name, "x")
     except OSError as e:
         print(f"Error creating file: {e}")
     
@@ -89,7 +89,7 @@ def scanRangedPorts():
             port_min = int(port_range_valid.group(1))
             port_max = int(port_range_valid.group(2))
             break
-    startTime = time.time()
+    start_time = time.time()
     print("\nScanning started at: " + str(datetime.now()))
     print("\n")
     for port in range(port_min, port_max + 1):
@@ -97,136 +97,159 @@ def scanRangedPorts():
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(0.5)
                 s.connect((target,port))
-                openPorts.append(port)
+                open_ports.append(port)
         except:
             # We don't need to do anything here. If we were interested in the closed ports we'd put something here.
             pass
-    if len(openPorts) == 0:
+    if len(open_ports) == 0:
         time.sleep(0.5)
-        fileWrite.close()
-        removeEmpytFile(fileName)
+        file_write.close()
+        remove_empyt_file(file_name)
         time.sleep(0.5)
         print("\nCan´t detect any open ports in that range")
-        confirmAgain = input("Insert again? Y/N\nYour choice: ")
-        if confirmAgain.upper() == "Y":
-            scanRangedPorts()
+        confirm_again = input("Insert again? Y/N\nYour choice: ")
+        if confirm_again.upper() == "Y":
+            scan_ranged_ports()
         else:
             print("\nThank you, we´re exiting now")
     else:
-        fileWrite.write(f"- - - Open Ports on target IP: [ {target} ] - - - \n\n")
-        for port in openPorts:
+        file_write.write(f"- - - Open Ports on target IP: [ {target} ] - - - \n\n")
+        for port in open_ports:
             # We use an f string to easily format the string with variables so we don't have to do concatenation.
             print(f"Port {port} is open on {target}.")
-            fileWrite.write(f"PORT: {port}\n")
-        fileWrite.close()
+            file_write.write(f"PORT: {port}\n")
+        file_write.close()
 
-    endTime = time.time()
-    processTime = (endTime - startTime) * 1000
+    end_time = time.time()
+    process_time = (end_time - start_time) * 1000
     time.sleep(0.5)
-    print(f"\nprocess take {processTime:.2f} in ms.")
+    print(f"\nprocess take {process_time:.2f} in ms.")
     print("\nExiting now...")
     sys.exit()
 
-def scanCommonPorts():
-    target = funcs.validate.validateIp()
-
-    commonPorts = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
-    #anotherPorts = 445, 5040,9009,58541,9180,58541,60531,60904
-    # commonPorts = [27036,49668,65001,58056,57196,58028,61542,139,9009]
-    #creating file; verify srftime
-    currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
-    fileName = "log-ports-" + currentTime
-    fileName = fileName.replace(":", "_")
-    currentTimeStr = datetime.now().strftime("%c")
+def scan_common_ports():
     try:
-        fileWrite = open(fileName, "x")
-    except OSError as e:
-        print(f"Error creating file: {e}")
-    
-    startTime = time.time()
-    print("\nScanning started at: " + str(datetime.now()))
-    print("\n")
-    for port in commonPorts:
+        target = funcs.validate.validate_ip()
+
+        common_ports = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
+        #anotherPorts = 445, 5040,9009,58541,9180,58541,60531,60904
+        # common_ports = [27036,49668,65001,58056,57196,58028,61542,139,9009]
+        #creating file; verify srftime
+        current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
+        file_name = "log-ports-" + current_time
+        file_name = file_name.replace(":", "_")
+        current_time_str = datetime.now().strftime("%c")
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.settimeout(0.5)
-                s.connect((target,port))
-                openPorts.append(port)
-        except:
-            # closed ports,  deal with here
-            pass
-    if len(openPorts) == 0:
+            file_write = open(file_name, "x")
+        except OSError as e:
+            print(f"Error creating file: {e}")
+        
+        start_time = time.time()
+        print("\nScanning started at: " + str(datetime.now()))
+        print("\n")
+        for port in common_ports:
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.settimeout(0.5)
+                    s.connect((target,port))
+                    open_ports.append(port)
+            except:
+                # closed ports,  deal with here
+                pass
+        if len(open_ports) == 0:
+            time.sleep(0.5)
+            file_write.close()
+            remove_empyt_file(file_name)
+            time.sleep(0.5)
+            print("\nNone of the common ports listed are open")
+            time.sleep(0.5)
+            print("\nThank you, we´re exiting now")
+            time.sleep(0.5)
+            sys.exit()
+        else:
+            file_write.write(f"- - - Open Common Ports - - - \n\n")
+            file_write.write(f"Target IP: [ {target} ]\n")
+            file_write.write(f"At time: [ {current_time_str} ] | [ {current_time} ]\n\n")
+            for port in open_ports:
+                # We use an f string to easily format the string with variables so we don't have to do concatenation.
+                print(f"Port {port} is open on {target}.")
+                file_write.write(f"PORT: [ {port} ]\n")
+            file_write.close()
+
+        end_time = time.time()
+        process_time = (end_time - start_time)
         time.sleep(0.5)
-        fileWrite.close()
-        removeEmpytFile(fileName)
+        print(f"\nprocess took [{process_time:.2f}s] total.")
+        print("\nExiting now...")
+        sys.exit()
+    except KeyboardInterrupt:
         time.sleep(0.5)
-        print("\nNone of the common ports listed are open")
-        time.sleep(0.5)
-        print("\nThank you, we´re exiting now")
+        print("\n\nClosing program...Bye!\n")
         time.sleep(0.5)
         sys.exit()
-    else:
-        fileWrite.write(f"- - - Open Common Ports - - - \n\n")
-        fileWrite.write(f"Target IP: [ {target} ]\n")
-        fileWrite.write(f"At time: [ {currentTimeStr} ] | [ {currentTime} ]\n\n")
-        for port in openPorts:
-            # We use an f string to easily format the string with variables so we don't have to do concatenation.
-            print(f"Port {port} is open on {target}.")
-            fileWrite.write(f"PORT: [ {port} ]\n")
-        fileWrite.close()
 
-    endTime = time.time()
-    processTime = (endTime - startTime)
-    time.sleep(0.5)
-    print(f"\nprocess took [{processTime:.2f}s] total.")
-    print("\nExiting now...")
-    sys.exit()
 
-def portScanner():
-    time.sleep(0.5)
-    print('\n')
-    print("=" * 50)
-    chooseTypeScan = input("[ --- Scan option: ---] \n1 - Scan: All Ports\n2 - Ranged Ports\n3 - Common Ports\nYour option:> ")
-    time.sleep(0.5)
-    if chooseTypeScan == "1":
-        scanAllPorts()
-    elif chooseTypeScan == "2":
-        scanRangedPorts()
-    elif chooseTypeScan == "3":
-        scanCommonPorts()
-    else:
-        print("Insert a valid Option")
-        portScanner()
+def port_scanner():
+    try:
+        time.sleep(0.5)
+        print('\n')
+        print("=" * 50)
+        choose_scan_type = input("[ --- Scan option: ---] \n1 - Scan: All Ports\n2 - Ranged Ports\n3 - Common Ports\nYour option:> ")
+        time.sleep(0.5)
+        match choose_scan_type:
+                case '1':
+                    scan_all_ports()
+                case '2':
+                    scan_ranged_ports()
+                case '3':
+                   scan_common_ports()
+                case _:
+                    print("Insert a valid Option")
+                    port_scanner()
+                    
+    except KeyboardInterrupt:
+            time.sleep(0.5)
+            print("\n\nClosing program...Bye!\n")
+            time.sleep(0.5)
+            sys.exit()
 
-def removeEmpytFile(name):
+def remove_empyt_file(name):
     if os.path.isfile(name) and os.path.getsize(name) == 0:
         os.remove(name)
 
-def validateUserOption():
-    chooseInput = input("[ --- Choose an option: --- ]\n1 - Port Scanner\n2 - Packet Sniffer\n3 - Close program\nYour option:> ")
-    if chooseInput == "1":
-        time.sleep(0.5)
-        portScanner()
-    elif chooseInput == "2":
-        time.sleep(0.5)
-        packetRoutine() 
-    elif chooseInput == "3":
-        print("Thank you!")
-        sys.exit()
-    else:
-        print("Insert a valid option\n\n")
-        validateUserOption()
-
+def validate_user_option():
+    try:
+        choose_input = input("[ --- Choose an option: --- ]\n1 - Port Scanner\n2 - Packet Sniffer\n3 - Close program\nYour option:> ")
+        match choose_input:
+                case '1':
+                    time.sleep(0.5)
+                    port_scanner()
+                case '2':
+                    time.sleep(0.5)
+                    packet_routine() 
+                case '3':
+                    print("Thank you!")
+                    sys.exit()
+                case _:
+                    print("Insert a valid option\n\n")
+                    validate_user_option()
+                    
+    except KeyboardInterrupt:
+            time.sleep(0.5)
+            print("\n\nClosing program...Bye!\n")
+            time.sleep(0.5)
+            sys.exit()
+    
 # infinite loop, waiting for packets and extract
-def packetRoutine():
+def packet_routine():
 
     #creating file; verify srftime
-    currentTime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
-    fileName = "log-sniffer-" + currentTime
-    fileName = fileName.replace(":", "_")
+    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
+    file_name = "log-sniffer-" + current_time
+    file_name = file_name.replace(":", "_")
 
     try:
-        fileWrite = open(fileName, "x")
+        file_write = open(file_name, "x")
     except OSError as e:
         print(f"Error creating file: {e}")
 
@@ -240,7 +263,7 @@ def packetRoutine():
         else:
         # need a socket to have connections with other computers]
         # AF_PACKET only works in linux
-            fileWrite.write(f"- - - Sniffing Data at - - -\n")
+            file_write.write(f"- - - Sniffing Data at - - -\n")
             print("\nStarting Sniffer - new routine at: " + str(datetime.now()))
             s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
             # last one, ntohns compatible with all machines, little endian, big endian
@@ -251,9 +274,9 @@ def packetRoutine():
                 # {} placeholders
                 print('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))
 
-                fileWrite.write("\n====================")
-                fileWrite.write('\nEthernet frame: ')
-                fileWrite.write('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))                
+                file_write.write("\n====================")
+                file_write.write('\nEthernet frame: ')
+                file_write.write('Destination: {}, Source: {}, Protocol: {}'.format(destinationMac, sourceMac, ethProtocol))                
 
                 # protocol 8 for IPv4
                 if ethProtocol == 8:
@@ -262,10 +285,10 @@ def packetRoutine():
                     print("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
                     print("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
 
-                    fileWrite.write("\n====================")
-                    fileWrite.write("\nIPv4 Packet: \n")
-                    fileWrite.write("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
-                    fileWrite.write("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
+                    file_write.write("\n====================")
+                    file_write.write("\nIPv4 Packet: \n")
+                    file_write.write("Version: {}, Header Length: {}, TTL: {}".format(version, headerLength, ttl))
+                    file_write.write("Protocol: {}, Source: {}, Destination: {}".format(protocol, source, destination))
 
                     # 1 - ICMP
                     if protocol == 1:
@@ -275,11 +298,11 @@ def packetRoutine():
                         print("\nICMP Data:\n")
                         print(formatLines(spacing, data))
 
-                        fileWrite.write("\n====================")
-                        fileWrite.write("\nICMP Packet: \n")
-                        fileWrite.write("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
-                        fileWrite.write("\nICMP Data:\n")
-                        fileWrite.write(formatLines(spacing, data))
+                        file_write.write("\n====================")
+                        file_write.write("\nICMP Packet: \n")
+                        file_write.write("Type: {}, Code: {}, CheckSum: {}".format(icmpType, code, checksum))
+                        file_write.write("\nICMP Data:\n")
+                        file_write.write(formatLines(spacing, data))
 
                     #6 - TCP
                     elif protocol == 6:
@@ -294,14 +317,14 @@ def packetRoutine():
                         print('\nTCP Data:\n')
                         print(formatLines(spacing, data))
 
-                        fileWrite.write("\n====================")
-                        fileWrite.write("\nTCP Segment:\n")
-                        fileWrite.write("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
-                        fileWrite.write("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
-                        fileWrite.write('\nFlags:\n')
-                        fileWrite.write('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
-                        fileWrite.write('\nTCP Data:\n')
-                        fileWrite.write(formatLines(spacing, data))
+                        file_write.write("\n====================")
+                        file_write.write("\nTCP Segment:\n")
+                        file_write.write("Source port: {}, Destination Port: {}".format(sourcePort, destPort))
+                        file_write.write("\nSequence: {}, Acknowledgement: {}".format(seqNumber, acknowNumber))
+                        file_write.write('\nFlags:\n')
+                        file_write.write('URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flagUrg, flagAck, flagPsh, flagRst, flagSin, flagFin))
+                        file_write.write('\nTCP Data:\n')
+                        file_write.write(formatLines(spacing, data))
 
                         # hexData = (str(data)[2:])
                         hexData = data.hex()
@@ -314,9 +337,9 @@ def packetRoutine():
                             # binarys = [bin.strip("'") for bin in binarys]
                             # intValues = [int(binary,2) for binary in binarys]
                             # asciiData = ''.join(chr(value) for value in intValues)
-                            fileWrite.write("\nTCP DATA bin\n:")
-                            fileWrite.write(f"{binaryData}")
-                            # fileWrite.write(decodedText)
+                            file_write.write("\nTCP DATA bin\n:")
+                            file_write.write(f"{binaryData}")
+                            # file_write.write(decodedText)
                         except ValueError as err:
                             print(f"Value Error: {err}")
                     # 17 - UDP
@@ -325,37 +348,36 @@ def packetRoutine():
                         print('\nUDP Segment:\n')
                         print('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
 
-                        fileWrite.write("\n====================")
-                        fileWrite.write('\nUDP Segment:\n')
-                        fileWrite.write('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
+                        file_write.write("\n====================")
+                        file_write.write('\nUDP Segment:\n')
+                        file_write.write('Source port: {}, Destination port: {}, Length: {}'.format(sourcePort, destPort, size))
                     # other
                     else:
                         print("---"*30)
                         print('\nOTHER DATA:\n')
                         print(formatLines(spacing, data))
 
-                        fileWrite.write("\n====================")
-                        fileWrite.write('\nOTHER DATA:\n')
-                        fileWrite.write(formatLines(spacing, data))
+                        file_write.write("\n====================")
+                        file_write.write('\nOTHER DATA:\n')
+                        file_write.write(formatLines(spacing, data))
                         
                 else:
                     print("---"*30)
                     print('\nDATA:\n')
                     print(formatLines(spacing,data))
 
-                    fileWrite.write("\n====================")
-                    fileWrite.write('\nDATA:\n')
-                    fileWrite.write(formatLines(spacing,data))  
+                    file_write.write("\n====================")
+                    file_write.write('\nDATA:\n')
+                    file_write.write(formatLines(spacing,data))  
 
     except KeyboardInterrupt:
-        fileWrite.close()
+        file_write.close()
         time.sleep(1)
         print("\nStopping program...Thanks for the packets.")
         time.sleep(0.5)
         print("\nWe´re leaving now, bye!")
         time.sleep(0.5)
         sys.exit()
-
 
 # unpack ethernet frame
 def ethernetFrame(data):
@@ -419,4 +441,4 @@ def formatLines(prefix, dataString, size=80):
     return '\n'.join([prefix + line for line in textwrap.wrap(dataString, size)])
 
 if __name__ == '__main__':
-    validateUserOption()
+    validate_user_option()
