@@ -8,12 +8,12 @@ website_regex_pattern = re.compile('^www\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,}){1,2}(?<!
 
 def validate_ip():
     try:
-        selection_param = input("[ --- Choose an option: --- ]\n1 - DNS\n2 - IP\n3 - Close program\nYour option:> ")
+        selection_param = input("\n[ --- Select an input method: --- ]\n\n1 - DNS\n2 - IP\n\nYour option:> ")
         match selection_param:
                 case '1':
                     try:
                         while True:
-                            target_address = input("\nInsert the name of a site [Format Eg. www.google.com.br]: ")
+                            target_address = input("\nEnter website name [Format Eg. www.google.com.br]: ")
                             match = re.match(website_regex_pattern,target_address)
                             if match:
                                 target = socket.gethostbyname(target_address)
@@ -25,9 +25,9 @@ def validate_ip():
                                     print(f"{target} is a valid ip address")
                                     return target
                             else:
-                                print("Try another name")
+                                print("Try another website name!")
                     except ValueError:
-                        print("\nCould not read the name of the website")
+                        print("\nCould not read the name of the website.")
                     except Exception as err:
                         # print(f"Unexpected {err=}, {type(err)=}")
                         print(f"Internal error trying to acess: {target}")
