@@ -1,4 +1,5 @@
-import sys, time
+import sys
+import time
 from funcs import scan as sc
 from funcs import sniffer as sf
 

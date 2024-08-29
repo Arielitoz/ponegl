@@ -3,7 +3,7 @@ import os
 import sys
 import socket
 import time
-import multiprocessing
+import multiprocessing as mp
 from funcs import validate
 from funcs import files
 from datetime import datetime
@@ -42,6 +42,7 @@ def port_scanner():
 
 def scan_common_ports():
     try:
+        # print("Number of cpu : ", mp.cpu_count())
         target = validate.validate_ip()
 
         common_ports = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,445,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
@@ -100,6 +101,7 @@ def scan_common_ports():
         sys.exit()
 
 def scan_all_ports():
+    target = validate.validate_ip()
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
     file_name = "log-ports-" + current_time
     file_name = file_name.replace(":", "_")
@@ -107,8 +109,6 @@ def scan_all_ports():
         file_write = open(file_name, "x")
     except OSError as e:
         print(f"Error creating file: {e}")
-
-    validate.validate_ip()
     
     # Banner
     print('_' * 50)

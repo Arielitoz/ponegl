@@ -1,4 +1,8 @@
-import sys, socket, time, struct, textwrap
+import sys
+import time
+import socket
+import struct
+import textwrap
 from funcs import files
 from datetime import datetime
 
