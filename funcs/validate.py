@@ -4,7 +4,7 @@ import sys
 
 # ReGex about ip pattern Eg. 127.32.23.94
 ip_addr_pattern = re.compile("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
-website_regex_pattern = (r'^www\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,}){1,2}(?<!/)$')
+website_regex_pattern = re.compile('^www\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,}){1,2}(?<!/)$')
 
 def validate_ip():
     try:
