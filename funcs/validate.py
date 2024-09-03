@@ -1,6 +1,7 @@
 import re
 import socket
 import sys
+from dns import resolver, reversename
 
 # ReGex about ip pattern Eg. 127.32.23.94
 ip_addr_pattern = re.compile("^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
@@ -38,7 +39,9 @@ def validate_ip():
                         target = input(str("\nPlease enter the ip address that you want to scan: "))
                         if ip_addr_pattern.search(target):
                             print(f"{target} is a valid ip address")
-                            return target
+                            address_dns = reversename.from_address(target)
+                            address_dns_reverse = str(resolver.query(address_dns,"PTR")[0])
+                            return target, address_dns_reverse
                 case _:
                     validate_ip()
             

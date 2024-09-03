@@ -43,7 +43,7 @@ def port_scanner():
 def scan_common_ports():
     try:
         # print("Number of cpu : ", mp.cpu_count())
-        target = validate.validate_ip()
+        [target, address_target] = validate.validate_ip()
 
         common_ports = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,445,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
         #creating file; verify srftime
@@ -81,6 +81,7 @@ def scan_common_ports():
         else:
             file_write.write(f"- - - Open Common Ports - - - \n\n")
             file_write.write(f"Target IP: [ {target} ]\n")
+            file_write.write(f"Target host/address: [ {address_target} ]\n")
             file_write.write(f"At time: [ {current_time_str} ] | [ {current_time} ]\n\n")
             for port in open_ports:
                 # We use an f string to easily format the string with variables so we don't have to do concatenation.
