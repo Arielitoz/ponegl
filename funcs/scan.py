@@ -8,12 +8,7 @@ from funcs import validate
 from funcs import files
 from datetime import datetime
 
-
-
 open_ports = []
-# Regular Expression Pattern to extract the number of ports you want to scan.
-# port_range_pattern = re.compile("([0-9]+)-([0-9]+)") - pattern for ranged ports
-# You have to specify <lowest_port>-<highest_port> (ex 10-100)
 
 # target - ip, port ranges / socket.AF_INET -> IPV4 family, SOCK_STREAM -> the socket type for TCP, the protocol that will be used to transport messages in the network.
 target = ""
@@ -127,10 +122,6 @@ def scan_all_ports():
             socket.setdefaulttimeout(0.5)
             #Return open ports
             response = s.connect_ex((target, port))
-            # nwThread = threading.Thread(target=s.connect_ex((target, port)))
-            # nwThread.start()
-            # nwThread.join()
-            # connect_ex/connect == 0, success
             if response == 0:
                 print("Port: [{}] is Open".format(port))
                 file_write.write(f"Open Port: [{port}]\n")
@@ -151,6 +142,10 @@ def scan_all_ports():
     except socket.error:
         print("\n Host not responding :(")
         sys.exit()
+
+# Regular Expression Pattern to extract the number of ports you want to scan.
+# port_range_pattern = re.compile("([0-9]+)-([0-9]+)") - pattern for ranged ports
+# You have to specify <lowest_port>-<highest_port> (ex 10-100)
 
 # def scan_ranged_ports():
 #     validateIp()

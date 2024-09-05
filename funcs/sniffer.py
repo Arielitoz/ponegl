@@ -6,9 +6,6 @@ import textwrap
 from funcs import files
 from datetime import datetime
 
-
-
-
 spacing = '\t\t\t '
 # infinite loop, waiting for packets and extract
 def packet_routine():
