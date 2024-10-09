@@ -9,7 +9,22 @@ A repository about some python infosec tools, such as a port scan and packet sni
 - Packet Sniffer
 
 ## Installation
+In the terminal, Python commands can be written in two ways:
+
+1. First Way:
+
+```bash
+python 
+``` 
+
+2. Second way:
+
+```bash
+python3
+```
+
 ### Requirements
+
 At the **terminal/Prompt**, follow the steps below!
 
 - **Python** (version 3.x or higher) needs to be installed. To check, use the command:
@@ -35,6 +50,12 @@ git clone https://github.com/Arielitoz/ponegl.git
 
 ```bash
 cd ponegl
+```
+
+3. Install dependencies:
+
+```bash
+pip install -r requirements.txt
 ```
 
 ### Start the project
