@@ -62,7 +62,7 @@ def packet_routine():
                     # 1 - ICMP
                     if protocol == 1:
                         icmp_type, code, checksum, data = packet_icmp(data)
-                        print("\ICMP Packet: \n")
+                        print("ICMP Packet: \n")
                         print("Type: {}, Code: {}, CheckSum: {}".format(icmp_type, code, checksum))
                         print("\nICMP Data:\n")
                         print(format_lines(spacing, data))
