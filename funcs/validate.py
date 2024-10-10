@@ -10,7 +10,7 @@ website_regex_pattern = re.compile('^www\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,}){1,2}(?<!
 
 def validate_ip():
     try:
-        selection_param = input("\n[ --- Select an input method: --- ]\n\n1 - DNS\n2 - IPv4\n3 - IPv6\n\nYour option:> ")
+        selection_param = input("\n[ --- Select an input method: --- ]\n\n1 - DNS\n2 - IPv4\n\nYour option:> ")
         match selection_param:
                 case '1':
                     try:
@@ -20,12 +20,9 @@ def validate_ip():
                             if match:
                                 target = socket.gethostbyname(target_address)
                                 # url = 'http://%s:80/clients/' % target
-                                # print(f"1 - {target_address}")
-                                # print(f"2 - {target}")
-                                # print(f"3 - {url}")
                                 if ipv4_addr_pattern.search(target):
                                     print(f"{target} is a valid ip address")
-                                    return target
+                                    return target, target_address
                             else:
                                 print("Try another website name!")
                     except ValueError:

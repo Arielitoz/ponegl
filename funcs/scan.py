@@ -38,7 +38,9 @@ def port_scanner():
 def scan_common_ports():
     try:
         # print("Number of cpu : ", mp.cpu_count())
-        [target, address_target] = validate.validate_ip()
+        [target , address_target] = validate.validate_ip()
+        print(target)
+        print(address_target)
 
         common_ports = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,445,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
         #creating file; verify srftime
@@ -97,7 +99,7 @@ def scan_common_ports():
         sys.exit()
 
 def scan_all_ports():
-    target = validate.validate_ip()
+    [target , address_target] = validate.validate_ip()
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
     file_name = "log-ports-" + current_time
     file_name = file_name.replace(":", "_")
@@ -115,6 +117,7 @@ def scan_all_ports():
 
     try:
         file_write.write(f"- - - All Open Ports on target IP: [ {target} ] - - - \n\n")
+        file_write.write(f"\nTarget host/address: [ {address_target} ]\n")
         # 65,535 existents ports / Scan every port on the target IP
         
         for port in range(port_min,port_max):
@@ -142,67 +145,3 @@ def scan_all_ports():
     except socket.error:
         print("\n Host not responding :(")
         sys.exit()
-
-# Regular Expression Pattern to extract the number of ports you want to scan.
-# port_range_pattern = re.compile("([0-9]+)-([0-9]+)") - pattern for ranged ports
-# You have to specify <lowest_port>-<highest_port> (ex 10-100)
-
-# def scan_ranged_ports():
-#     validateIp()
-
-#     #creating file; verify srftime
-#     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
-#     file_name = "log-ports-" + current_time
-#     file_name = file_name.replace(":", "_")
-#     try:
-#         file_write = open(file_name, "x")
-#     except OSError as e:
-#         print(f"Error creating file: {e}")
-    
-#     while True:
-#     # You can scan 0-65535 ports. This scanner is basic and doesn't use multithreading so scanning all 
-#     # the ports is not advised.
-#         print("Please enter the range of ports you want to scan in format: <int>-<int> (ex would be 60-120)")
-#         port_range = input("Enter port range: ")
-#         port_range_valid = port_range_pattern.search(port_range.replace(" ",""))
-#         if port_range_valid:
-#             port_min = int(port_range_valid.group(1))
-#             port_max = int(port_range_valid.group(2))
-#             break
-#     start_time = time.time()
-#     print("\nScanning started at: " + str(datetime.now()))
-#     print("\n")
-#     for port in range(port_min, port_max + 1):
-#         try:
-#             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-#                 s.settimeout(0.5)
-#                 s.connect((target,port))
-#                 open_ports.append(port)
-#         except:
-#             # We don't need to do anything here. If we were interested in the closed ports we'd put something here.
-#             pass
-#     if len(open_ports) == 0:
-#         time.sleep(0.5)
-#         file_write.close()
-#         remove_empyt_file(file_name)
-#         time.sleep(0.5)
-#         print("\nCan´t detect any open ports in that range")
-#         confirm_again = input("Insert again? Y/N\nYour choice: ")
-#         if confirm_again.upper() == "Y":
-#             scan_ranged_ports()
-#         else:
-#             print("\nThank you, we´re exiting now")
-#     else:
-#         file_write.write(f"- - - Open Ports on target IP: [ {target} ] - - - \n\n")
-#         for port in open_ports:
-#             # We use an f string to easily format the string with variables so we don't have to do concatenation.
-#             print(f"Port {port} is open on {target}.")
-#             file_write.write(f"PORT: {port}\n")
-#         file_write.close()
-
-#     end_time = time.time()
-#     process_time = (end_time - start_time) * 1000
-#     time.sleep(0.5)
-#     print(f"\nprocess take {process_time:.2f} in ms.")
-#     print("\nExiting now...")
-#     sys.exit()
