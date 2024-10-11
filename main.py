@@ -5,11 +5,11 @@ from funcs import sniffer as sf
 
 def validate_user_option():
     try:
-        choose_input = input("\n[ --- Choose an option: --- ]\n\n1 - Port Scanner\n2 - Packet Sniffer\n\nPress Ctrl+C to close program!\n\nYour option:> ")
+        choose_input = input("\n[ --- Choose an option: --- ]\n\n1 - Port Scanner [Common Ports]\n2 - Packet Sniffer\n\nPress Ctrl+C to close program!\n\nYour option:> ")
         match choose_input:
                 case '1':
                     time.sleep(0.5)
-                    sc.port_scanner()
+                    sc.scan_common_ports()
                 case '2':
                     time.sleep(0.5)
                     sf.packet_routine()
