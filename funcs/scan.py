@@ -3,7 +3,7 @@ import os
 import sys
 import socket
 import time
-import multiprocessing as mp
+from multiprocessing import Pool
 from funcs import validate
 from funcs import files
 from datetime import datetime
@@ -35,35 +35,50 @@ def port_scanner():
             time.sleep(0.5)
             sys.exit()
 
+# Tuple - target(ip) / port 
+def scan_port(target_port):
+    target, port = target_port
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.5)
+            s.connect((target, port))
+            return port
+    except:
+        return None
+
 def scan_common_ports():
     try:
         # print("Number of cpu : ", mp.cpu_count())
         [target , address_target] = validate.validate_ip()
 
         common_ports = [7,20,21,22,23,25,53,67,68,69,80,110,119,123,135,137,139,143,161,179,194,411,412,443,445,465,500,563,587,636,989,990,993,995,1080,1194,1725,2049,3128,3389,5722,8080]
+        
         #creating file; verify srftime
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
-        file_name = "log-ports-" + current_time
-        file_name = file_name.replace(":", "_")
+        file_name = "log-ports-" + current_time.replace(":", "_")
         current_time_str = datetime.now().strftime("%c")
+
         try:
             file_write = open(file_name, "x")
         except OSError as e:
             print(f"Error creating file: {e}")
+            return
         
         start_time = time.time()
         print("\nScanning started at: " + str(datetime.now()))
         print("\n")
-        for port in common_ports:
-            try:
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    s.settimeout(0.5)
-                    s.connect((target,port))
-                    open_ports.append(port)
-            except:
-                # closed ports,  deal with here
-                pass
-        if len(open_ports) == 0:
+
+        #Tuple for mapping
+        target_ports = [(target, port) for port in common_ports]
+
+        # Pool - parallel scan
+        with Pool() as pool:
+            open_ports = pool.map(scan_port, target_ports)
+
+        # Filtering open ports
+        open_ports = [port for port in open_ports if port is not None]
+
+        if not open_ports:
             time.sleep(0.5)
             file_write.close()
             files.remove_empyt_file(file_name)
