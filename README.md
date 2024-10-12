@@ -5,7 +5,6 @@ A repository about some python infosec tools, such as a port scan and packet sni
 ## Features
 - Port scan
     - Common ports
-    - All ports
 - Packet Sniffer
 
 ## Installation
